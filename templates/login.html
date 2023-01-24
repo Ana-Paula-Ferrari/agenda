@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Agenda</title>
+    </head>
+    <body>
+        <h1>Login</h1>
+
+        <!Vai submeter as informações para login/submit->
+        <form action="submit" method="POST"> {% csrf_token %} <!gera um token de segurança desse certicado/ quando methods diferente de GET->
+            <div align="center">
+                <label> Usuário:</label>
+                <input type="text" name="username">
+                <label> Password:</label>
+                <input type="password" name="password">
+                <button type="submit">Entrar</button>
+            </div>
+        </form>
+
+        <! mensagem de Erro de autenticação->
+        <div align="center">
+        {% for message in messages %}
+            <strong>Erro! </strong>{{message}} <!Vai aparecer na tela a mensagem.error da views->
+        {% endfor %}
+        </div>
+
+    </body>
+</html>

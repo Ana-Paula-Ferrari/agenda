@@ -15,8 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from core import views
+from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-   
+    #path('', views.index) #end. raiz vai redirecionar para agenda
+    path('', RedirectView.as_view(url='/agenda/')), #Segunda forma de redirecionar sem criar uma views ('/')
+    path('login/', views.login_user),
+    path('login/submit', views.submit_login),
+    path('logout/', views.logout_user),
+    path('agenda/', views.lista_eventos), #Endereco da rota - irá para views função lista_eventos
+    path('agenda/evento/', views.evento),
+    path('agenda/evento/submit', views.submit_evento),
+    path('agenda/evento/delete/<int:id_evento>/', views.delete_evento) #Rota para excluir os dados
+
 ]
