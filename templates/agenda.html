@@ -9,11 +9,14 @@
         
        <ul style="font-size: 18px"> <!criar uma lista de tópicos ->
         {% for evento in eventos %}
-            <li>{{evento.titulo}} - {{evento.get_data_evento}}  <!Vai mostrar na tela os eventos coletado no banco de dados->
-
-                ( <a href="evento/?id={{evento.id}}">Editar</a> <!Vai levar para a tela de inserção e passa o parametro pelo GET->
-                 / <a href="evento/delete/{{evento.id}}/">Excluir</a> ) <!Link para excluir o evento pelo id rapidamente/ vai buscar a views delete_evento->
-
+            <li>
+                <div style={% if evento.get_evento_atrasado %}
+                                "color:red"
+                                {% endif %}>
+                    {{evento.titulo}} - {{evento.get_data_evento}}  <!Vai mostrar na tela os eventos coletado no banco de dados->
+                    ( <a href="evento/?id={{evento.id}}">Editar</a> <!Vai levar para a tela de inserção e passa o parametro pelo GET->
+                    / <a href="evento/delete/{{evento.id}}/">Excluir</a> ) <!Link para excluir o evento pelo id rapidamente/ vai buscar a views delete_evento->
+                </div>
             </li>   
         {% endfor %}
         </ul>

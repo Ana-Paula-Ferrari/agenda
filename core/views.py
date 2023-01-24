@@ -1,8 +1,13 @@
-from django.shortcuts import render, redirect
-from core.models import Evento
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
+from datetime import datetime, timedelta
+
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.http.response import Http404, JsonResponse
+from django.shortcuts import redirect, render
+from django.contrib.auth.models import User
+
+from core.models import Evento
 
 # Create your views here.
 
@@ -37,7 +42,9 @@ def lista_eventos(request):
    usuario = request.user
    # evento = Evento.objects.get(id=1) #Consultar id
    #evento = Evento.objects.all() #Listar todos os dados
-   evento = Evento.objects.filter(usuario=usuario) #Filtrar pelos dados do usuário/ pode dar erro se o usuário não estiver logado
+   data_atual = datetime.now() - timedelta(hours=1) #data atual/ mostrar evento que passou até 1 hora
+   evento = Evento.objects.filter(usuario=usuario,
+                                  data_evento__gt=data_atual) #Filtrar eventos do usuario da data atual em diante __gt/ menor que a data atual __lt
    dados = {'eventos':evento}
    return render(request,'agenda.html', dados)
 
@@ -91,7 +98,26 @@ def submit_evento(request):
 def delete_evento(request, id_evento):
    #Cada usuario podera excluir o evento que é dele
    usuario = request.user
-   evento = Evento.objects.get(id=id_evento) #Vai buscar na tabelas o id do evento
+   try:
+      evento = Evento.objects.get(id=id_evento) #Vai buscar na tabelas o id do evento
+   except Exception:
+      raise Http404()
    if usuario == evento.usuario: #Verificar se o usuario que esta logado é o que criou o id
       evento.delete()  #Deletar o registro 
+   else:
+      raise Http404()
    return redirect('/')
+
+
+
+#@login_required(login_url='/login/')
+#def json_lista_evento(request):
+  # usuario = request.user
+  # evento = Evento.objects.filter(usuario=usuario).values('id', 'titulo') #Valores a ser exibido
+  # return JsonResponse(list(evento), safe=False) #Lista de ids e titulos/ safe necessário porque está passando lista e não dicionário
+
+#Deixar a informacoes da agenda dispónivel
+def json_lista_evento(request, id_usuario):
+   usuario = User. objects.get(id=id_usuario)
+   evento = Evento.objects.filter(usuario=usuario).values('id', 'titulo')
+   return JsonResponse(list(evento), safe=False)
